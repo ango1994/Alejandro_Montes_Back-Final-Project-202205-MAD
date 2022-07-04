@@ -14,4 +14,10 @@ const userSchema = new mongoose.Schema({
     password: { type: mongoose.SchemaTypes.String, required: true },
     comics: [{ type: mongoose.Types.ObjectId, ref: 'Comic' }],
 });
+userSchema.set('toJSON', {
+    transform: (document, returnedObject) => {
+        delete returnedObject.__v;
+        delete returnedObject.passwd;
+    },
+});
 export const User = mongoose.model('User', userSchema);
