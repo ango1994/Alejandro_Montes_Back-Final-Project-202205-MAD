@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { mongooseConnect } from '../db/mongoose';
-import { iRelationField } from '../interfaces/relation.field';
+import { mongooseConnect } from '../db/mongoose.js';
+import { iRelationField } from '../interfaces/relation.field.js';
 
 (async () => {
     await mongooseConnect();

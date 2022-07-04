@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { mongooseConnect } from '../db/mongoose';
+import { mongooseConnect } from '../db/mongoose.js';
 (async () => {
     await mongooseConnect();
 })();
