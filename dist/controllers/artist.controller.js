@@ -7,10 +7,9 @@ export class ArtistController {
     };
     getController = async (req, resp) => {
         resp.setHeader('Content-type', 'application/json');
-        console.log(req.params.id);
-        const result = await Artist.findById(req.params.id);
-        if (result) {
-            resp.send(JSON.stringify(result));
+        const artist = await Artist.findById(req.params.id);
+        if (artist) {
+            resp.send(JSON.stringify(artist));
         }
         else {
             resp.status(404);
