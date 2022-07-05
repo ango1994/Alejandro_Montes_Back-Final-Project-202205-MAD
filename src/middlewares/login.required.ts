@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { JwtPayload } from 'jsonwebtoken';
-import { ExtRequest, iTokenPayload } from '../interfaces/token';
-import { verifyToken } from '../services/authorization';
+import { ExtRequest, iTokenPayload } from '../interfaces/token.js';
+import { verifyToken } from '../services/authorization.js';
 
 export const loginRequired = (
     req: Request,

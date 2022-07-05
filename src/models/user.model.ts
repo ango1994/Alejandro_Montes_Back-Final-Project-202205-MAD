@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-import { mongooseConnect } from '../db/mongoose';
-import { iRelationField } from '../interfaces/relation.field';
-import { isEmail } from '../helpers/is.email';
+import { mongooseConnect } from '../db/mongoose.js';
+import { iRelationField } from '../interfaces/relation.field.js';
+import { isEmail } from '../helpers/is.email.js';
 
 mongooseConnect();
 

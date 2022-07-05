@@ -1,4 +1,4 @@
-import { verifyToken } from '../services/authorization';
+import { verifyToken } from '../services/authorization.js';
 export const loginRequired = (req, resp, next) => {
     const authorization = req.get('authorization');
     let token;
