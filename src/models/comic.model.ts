@@ -29,8 +29,7 @@ const comicSchema = new mongoose.Schema({
     artist: [{ type: mongoose.Types.ObjectId, ref: 'Artist' }],
     score: [
         {
-            type: mongoose.Types.ObjectId,
-            ref: 'User',
+            user: { type: mongoose.Types.ObjectId, ref: 'User' },
             score: {
                 type: mongoose.SchemaTypes.Number,
                 required: true,

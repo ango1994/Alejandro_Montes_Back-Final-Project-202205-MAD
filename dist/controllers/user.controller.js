@@ -52,8 +52,14 @@ export class UserController {
             next(error);
         }
     };
-    patchController = async (req, resp) => {
+    patchController = async (req, resp, next) => {
         const newItem = await User.findByIdAndUpdate(req.params.id, req.body);
+        if (!newItem || req.body.email) {
+            const error = new Error('Invalid user');
+            error.name = 'UserError';
+            next(error);
+            return;
+        }
         resp.setHeader('Content-type', 'application/json');
         resp.send(JSON.stringify(newItem));
     };

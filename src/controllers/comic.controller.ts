@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import { ExtRequest } from '../interfaces/token.js';
 import { Comic } from '../models/comic.model.js';
 
 export class ComicController {
@@ -37,5 +38,22 @@ export class ComicController {
         const newItem = await Comic.findByIdAndUpdate(req.params.id, req.body);
         resp.setHeader('Content-type', 'application/json');
         resp.send(JSON.stringify(newItem));
+    };
+
+    patchScoreController = async (req: Request, resp: Response) => {
+        const userID = (req as unknown as ExtRequest).tokenPayload.id;
+        const findComic = await Comic.findById(req.params.id);
+        const alreadyScored = findComic?.score.find(
+            (userScore) => String(userScore.user) === String(userID)
+        );
+        if (alreadyScored) {
+            alreadyScored.score = req.body.score;
+        } else {
+            findComic?.score.push({ user: userID, score: req.body.score });
+        }
+        const newComic = findComic?.save();
+        resp.setHeader('Content-type', 'application/json');
+
+        resp.send(JSON.stringify(newComic));
     };
 }
