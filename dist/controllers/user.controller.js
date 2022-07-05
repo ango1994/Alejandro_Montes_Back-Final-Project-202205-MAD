@@ -2,9 +2,16 @@ import { response } from 'express';
 import { User } from '../models/user.model.js';
 import * as aut from '../services/authorization.js';
 export class UserController {
-    getController = async (req, resp) => {
+    getController = async (req, resp, next) => {
         resp.setHeader('Content-type', 'application/json');
-        const user = await User.findById(req.params.id).populate('comics');
+        let user;
+        try {
+            user = await User.findById(req.params.id).populate('comics');
+        }
+        catch (error) {
+            next(error);
+            return;
+        }
         if (user) {
             resp.send(JSON.stringify(user));
         }
@@ -14,29 +21,35 @@ export class UserController {
         }
     };
     postController = async (req, resp, next) => {
+        let newUser;
         try {
-            const newItem = await User.create(req.body);
-            resp.setHeader('Content-type', 'application/json');
-            resp.status(201);
-            resp.send(JSON.stringify(newItem));
+            req.body.password = await aut.encrypt(req.body.password);
+            newUser = await User.create(req.body);
         }
         catch (error) {
             next(error);
+            return;
         }
+        resp.setHeader('Content-type', 'application/json');
+        resp.status(201);
+        resp.send(JSON.stringify(newUser));
     };
     loginController = async (req, resp, next) => {
         const findUser = await User.findOne({ name: req.body.name });
+        console.log(findUser);
         if (!findUser ||
-            !(await aut.compare(req.body.passwd, findUser.passwd))) {
+            !(await aut.compare(req.body.password, findUser.password))) {
             const error = new Error('Invalid user or password');
             error.name = 'UserAuthorizationError';
             next(error);
+            console.log('erooooor');
             return;
         }
         const tokenPayLoad = {
             id: findUser.id,
             name: findUser.name,
         };
+        console.log('pasa');
         const token = aut.createToken(tokenPayLoad);
         resp.setHeader('Content-type', 'application/json');
         resp.status(201);

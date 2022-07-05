@@ -40,6 +40,21 @@ export class ComicController {
         resp.send(JSON.stringify(newItem));
     };
 
+    searchController = async (
+        req: Request,
+        resp: Response,
+        next: NextFunction
+    ) => {
+        if ((req.query.q as string).length < 3) {
+            next();
+        }
+        const comics = await Comic.find({
+            name: { $regex: req.query.q, $options: 'i' },
+        });
+        resp.setHeader('Content-type', 'application/json');
+        resp.send(JSON.stringify(comics));
+    };
+
     patchScoreController = async (req: Request, resp: Response) => {
         const userID = (req as unknown as ExtRequest).tokenPayload.id;
         const findComic = await Comic.findById(req.params.id);

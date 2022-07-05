@@ -1,12 +1,23 @@
 import { NextFunction, Request, response, Response } from 'express';
+import { HydratedDocument } from 'mongoose';
 import { iTokenPayload } from '../interfaces/token.js';
 import { User } from '../models/user.model.js';
 import * as aut from '../services/authorization.js';
 
 export class UserController {
-    getController = async (req: Request, resp: Response) => {
+    getController = async (
+        req: Request,
+        resp: Response,
+        next: NextFunction
+    ) => {
         resp.setHeader('Content-type', 'application/json');
-        const user = await User.findById(req.params.id).populate('comics');
+        let user;
+        try {
+            user = await User.findById(req.params.id).populate('comics');
+        } catch (error) {
+            next(error);
+            return;
+        }
         if (user) {
             resp.send(JSON.stringify(user));
         } else {
@@ -20,14 +31,17 @@ export class UserController {
         resp: Response,
         next: NextFunction
     ) => {
+        let newUser: HydratedDocument<any>;
         try {
-            const newItem = await User.create(req.body);
-            resp.setHeader('Content-type', 'application/json');
-            resp.status(201);
-            resp.send(JSON.stringify(newItem));
+            req.body.password = await aut.encrypt(req.body.password);
+            newUser = await User.create(req.body);
         } catch (error) {
             next(error);
+            return;
         }
+        resp.setHeader('Content-type', 'application/json');
+        resp.status(201);
+        resp.send(JSON.stringify(newUser));
     };
 
     loginController = async (
@@ -36,19 +50,22 @@ export class UserController {
         next: NextFunction
     ) => {
         const findUser: any = await User.findOne({ name: req.body.name });
+        console.log(findUser);
         if (
             !findUser ||
-            !(await aut.compare(req.body.passwd, findUser.passwd))
+            !(await aut.compare(req.body.password, findUser.password))
         ) {
             const error = new Error('Invalid user or password');
             error.name = 'UserAuthorizationError';
             next(error);
+            console.log('erooooor');
             return;
         }
         const tokenPayLoad: iTokenPayload = {
             id: findUser.id,
             name: findUser.name,
         };
+        console.log('pasa');
 
         const token = aut.createToken(tokenPayLoad);
         resp.setHeader('Content-type', 'application/json');

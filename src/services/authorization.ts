@@ -20,3 +20,5 @@ export const createToken = (tokenPayLoad: iTokenPayload) => {
 export const verifyToken = (token: string) => {
     return jwt.verify(token, process.env.SECRET as string);
 };
+
+export const checkPatchRequestUser = () => {};
