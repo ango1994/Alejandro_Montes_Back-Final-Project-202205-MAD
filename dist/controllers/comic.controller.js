@@ -32,6 +32,16 @@ export class ComicController {
         resp.setHeader('Content-type', 'application/json');
         resp.send(JSON.stringify(newItem));
     };
+    searchController = async (req, resp, next) => {
+        if (req.query.q.length < 3) {
+            next();
+        }
+        const comics = await Comic.find({
+            name: { $regex: req.query.q, $options: 'i' },
+        });
+        resp.setHeader('Content-type', 'application/json');
+        resp.send(JSON.stringify(comics));
+    };
     patchScoreController = async (req, resp) => {
         const userID = req.tokenPayload.id;
         const findComic = await Comic.findById(req.params.id);
