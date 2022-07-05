@@ -1,9 +1,7 @@
 import mongoose from 'mongoose';
 import { mongooseConnect } from '../db/mongoose';
 import { isEmail } from '../helpers/is.email';
-(async () => {
-    await mongooseConnect();
-})();
+mongooseConnect();
 const userSchema = new mongoose.Schema({
     name: { type: mongoose.SchemaTypes.String, required: true },
     email: {

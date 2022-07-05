@@ -1,11 +1,9 @@
 import mongoose from 'mongoose';
-import { mongooseConnect } from '../db/mongoose';
-import { iRelationField } from '../interfaces/relation.field';
-import { iRelationFieldscore } from '../interfaces/relation.field.score';
+import { mongooseConnect } from '../db/mongoose.js';
+import { iRelationField } from '../interfaces/relation.field.js';
+import { iRelationFieldscore } from '../interfaces/relation.field.score.js';
 
-(async () => {
-    await mongooseConnect();
-})();
+mongooseConnect();
 
 export interface iComic {
     id?: string;
