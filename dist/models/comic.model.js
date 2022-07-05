@@ -1,8 +1,6 @@
 import mongoose from 'mongoose';
-import { mongooseConnect } from '../db/mongoose';
-(async () => {
-    await mongooseConnect();
-})();
+import { mongooseConnect } from '../db/mongoose.js';
+mongooseConnect();
 const comicSchema = new mongoose.Schema({
     name: { type: mongoose.SchemaTypes.String, required: true },
     image: { type: mongoose.SchemaTypes.String, required: true },

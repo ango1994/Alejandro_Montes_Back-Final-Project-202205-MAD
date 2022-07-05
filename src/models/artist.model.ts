@@ -2,9 +2,7 @@ import mongoose from 'mongoose';
 import { mongooseConnect } from '../db/mongoose.js';
 import { iRelationField } from '../interfaces/relation.field.js';
 
-(async () => {
-    await mongooseConnect();
-})();
+mongooseConnect();
 
 export interface iArtist {
     id?: string;

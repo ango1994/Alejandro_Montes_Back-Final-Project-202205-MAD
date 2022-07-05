@@ -3,9 +3,7 @@ import { mongooseConnect } from '../db/mongoose';
 import { iRelationField } from '../interfaces/relation.field';
 import { isEmail } from '../helpers/is.email';
 
-(async () => {
-    await mongooseConnect();
-})();
+mongooseConnect();
 
 export interface iUser {
     id?: string;

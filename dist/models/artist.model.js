@@ -1,8 +1,6 @@
 import mongoose from 'mongoose';
 import { mongooseConnect } from '../db/mongoose.js';
-(async () => {
-    await mongooseConnect();
-})();
+mongooseConnect();
 const artistSchema = new mongoose.Schema({
     name: { type: mongoose.SchemaTypes.String, required: true },
     about: {
