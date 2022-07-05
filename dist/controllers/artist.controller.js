@@ -16,4 +16,15 @@ export class ArtistController {
             resp.send(JSON.stringify({}));
         }
     };
+    postController = async (req, resp, next) => {
+        try {
+            const newItem = await Artist.create(req.body);
+            resp.setHeader('Content-type', 'application/json');
+            resp.status(201);
+            resp.send(JSON.stringify(newItem));
+        }
+        catch (error) {
+            next(error);
+        }
+    };
 }

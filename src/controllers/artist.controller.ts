@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { Artist } from '../models/artist.model.js';
 
 export class ArtistController {
@@ -16,6 +16,21 @@ export class ArtistController {
         } else {
             resp.status(404);
             resp.send(JSON.stringify({}));
+        }
+    };
+
+    postController = async (
+        req: Request,
+        resp: Response,
+        next: NextFunction
+    ) => {
+        try {
+            const newItem = await Artist.create(req.body);
+            resp.setHeader('Content-type', 'application/json');
+            resp.status(201);
+            resp.send(JSON.stringify(newItem));
+        } catch (error) {
+            next(error);
         }
     };
 }
