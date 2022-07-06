@@ -1,16 +1,10 @@
-import { response } from 'express';
 import { User } from '../models/user.model.js';
 import * as aut from '../services/authorization.js';
 export class UserController {
-    getController = async (req, resp, next) => {
-        resp.setHeader('Content-type', 'application/json');
+    getController = async (req, res, next) => {
+        res.setHeader('Content-type', 'application/json');
         let user;
         try {
-            if (req.params.id.length !== 24) {
-                const error = new Error('Id invalid');
-                error.name = 'UserError';
-                throw error;
-            }
             user = await User.findById(req.params.id).populate('comics');
         }
         catch (error) {
@@ -18,14 +12,14 @@ export class UserController {
             return;
         }
         if (user) {
-            resp.send(JSON.stringify(user));
+            res.send(JSON.stringify(user));
         }
         else {
-            resp.status(404);
-            resp.send(JSON.stringify({}));
+            res.status(404);
+            res.send(JSON.stringify({}));
         }
     };
-    postController = async (req, resp, next) => {
+    postController = async (req, res, next) => {
         let newUser;
         try {
             req.body.password = await aut.encrypt(req.body.password);
@@ -35,11 +29,11 @@ export class UserController {
             next(error);
             return;
         }
-        resp.setHeader('Content-type', 'application/json');
-        resp.status(201);
-        resp.send(JSON.stringify(newUser));
+        res.setHeader('Content-type', 'application/json');
+        res.status(201);
+        res.send(JSON.stringify(newUser));
     };
-    loginController = async (req, resp, next) => {
+    loginController = async (req, res, next) => {
         const findUser = await User.findOne({ name: req.body.name });
         console.log(findUser);
         if (!findUser ||
@@ -54,21 +48,21 @@ export class UserController {
             name: findUser.name,
         };
         const token = aut.createToken(tokenPayLoad);
-        resp.setHeader('Content-type', 'application/json');
-        resp.status(201);
-        resp.send(JSON.stringify({ token, id: findUser.id }));
+        res.setHeader('Content-type', 'application/json');
+        res.status(201);
+        res.send(JSON.stringify({ token, id: findUser.id }));
     };
     deleteController = async (req, res, next) => {
         try {
             const deletedItem = await User.findByIdAndDelete(req.params.id);
-            response.status(202);
+            res.status(202);
             res.send(JSON.stringify(deletedItem));
         }
         catch (error) {
             next(error);
         }
     };
-    patchController = async (req, resp, next) => {
+    patchController = async (req, res, next) => {
         const newItem = await User.findByIdAndUpdate(req.params.id, req.body);
         if (!newItem || req.body.email) {
             const error = new Error('Invalid user');
@@ -76,7 +70,7 @@ export class UserController {
             next(error);
             return;
         }
-        resp.setHeader('Content-type', 'application/json');
-        resp.send(JSON.stringify(newItem));
+        res.setHeader('Content-type', 'application/json');
+        res.send(JSON.stringify(newItem));
     };
 }
