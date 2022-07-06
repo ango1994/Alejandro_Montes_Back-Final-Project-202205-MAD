@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema({
         type: mongoose.SchemaTypes.String,
         required: true,
         validate: [isEmail, 'Provided email is not valid.'],
+        unique: true,
     },
     password: { type: mongoose.SchemaTypes.String, required: true },
     comics: [{ type: mongoose.Types.ObjectId, ref: 'Comic' }],

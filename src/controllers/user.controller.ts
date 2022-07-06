@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { HydratedDocument } from 'mongoose';
-import { iTokenPayload } from '../interfaces/token.js';
+import { ExtRequest, iTokenPayload } from '../interfaces/token.js';
 import { User } from '../models/user.model.js';
 import * as aut from '../services/authorization.js';
 
@@ -46,7 +46,7 @@ export class UserController {
         next: NextFunction
     ) => {
         const findUser: any = await User.findOne({ name: req.body.name });
-        console.log(findUser);
+
         if (
             !findUser ||
             !(await aut.compare(req.body.password, findUser.password))
@@ -73,9 +73,13 @@ export class UserController {
         next: NextFunction
     ) => {
         try {
-            const deletedItem = await User.findByIdAndDelete(req.params.id);
-            res.status(202);
-            res.send(JSON.stringify(deletedItem));
+            const userId = (req as unknown as ExtRequest).tokenPayload.id;
+            const findUser = await User.findById(req.params.id);
+            if (String(userId) === String(findUser?._id)) {
+                const deletedItem = await User.findByIdAndDelete(findUser);
+                res.status(202);
+                res.send(JSON.stringify(deletedItem));
+            }
         } catch (error) {
             next(error);
         }

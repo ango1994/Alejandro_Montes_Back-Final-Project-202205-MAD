@@ -35,7 +35,6 @@ export class UserController {
     };
     loginController = async (req, res, next) => {
         const findUser = await User.findOne({ name: req.body.name });
-        console.log(findUser);
         if (!findUser ||
             !(await aut.compare(req.body.password, findUser.password))) {
             const error = new Error('Invalid user or password');
@@ -54,9 +53,13 @@ export class UserController {
     };
     deleteController = async (req, res, next) => {
         try {
-            const deletedItem = await User.findByIdAndDelete(req.params.id);
-            res.status(202);
-            res.send(JSON.stringify(deletedItem));
+            const userId = req.tokenPayload.id;
+            const findUser = await User.findById(req.params.id);
+            if (String(userId) === String(findUser?._id)) {
+                const deletedItem = await User.findByIdAndDelete(findUser);
+                res.status(202);
+                res.send(JSON.stringify(deletedItem));
+            }
         }
         catch (error) {
             next(error);
