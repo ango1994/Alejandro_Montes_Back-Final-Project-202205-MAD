@@ -53,27 +53,28 @@ export class UserController {
     };
     deleteController = async (req, res, next) => {
         try {
-            const userId = req.tokenPayload.id;
-            const findUser = await User.findById(req.params.id);
-            if (String(userId) === String(findUser?._id)) {
-                const deletedItem = await User.findByIdAndDelete(findUser);
-                res.status(202);
-                res.send(JSON.stringify(deletedItem));
-            }
+            const deletedItem = await User.findByIdAndDelete(req.tokenPayload.id);
+            res.status(202);
+            res.send(JSON.stringify(deletedItem));
         }
         catch (error) {
             next(error);
         }
     };
     patchController = async (req, res, next) => {
-        const newItem = await User.findByIdAndUpdate(req.params.id, req.body);
-        if (!newItem || req.body.email) {
-            const error = new Error('Invalid user');
-            error.name = 'UserError';
-            next(error);
-            return;
+        try {
+            const newItem = await User.findByIdAndUpdate(req.params.id, req.body);
+            if (!newItem || req.body.email) {
+                const error = new Error('Invalid user');
+                error.name = 'UserError';
+                next(error);
+                return;
+            }
+            res.setHeader('Content-type', 'application/json');
+            res.send(JSON.stringify(newItem));
         }
-        res.setHeader('Content-type', 'application/json');
-        res.send(JSON.stringify(newItem));
+        catch (error) {
+            next(error);
+        }
     };
 }

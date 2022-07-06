@@ -1,9 +1,8 @@
 import { User } from '../models/user.model.js';
-export const userRequiredForTasks = async (req, resp, next) => {
-    // el usuario tiene acceso al recurso (e.g. Tarea)
+export const userRequiredForUser = async (req, resp, next) => {
     const userID = req.tokenPayload.id;
-    const findTask = await User.findById(req.params.id);
-    if (findTask?.id === userID) {
+    const findUser = await User.findById(req.params.id);
+    if (String(findUser?._id) === String(userID)) {
         next();
     }
     else {
