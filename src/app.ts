@@ -4,6 +4,7 @@ import cors from 'cors';
 import { artistRouter } from './routers/artist.router.js';
 import { comicRouter } from './routers/comic.router.js';
 import { userRouter } from './routers/user.router.js';
+import { errorControl } from './middlewares/error-control.js';
 
 export const app = express();
 app.use(morgan('dev'));
@@ -13,3 +14,5 @@ app.use(cors());
 app.use('/artist', artistRouter);
 app.use('/comic', comicRouter);
 app.use('/user', userRouter);
+
+app.use(errorControl);

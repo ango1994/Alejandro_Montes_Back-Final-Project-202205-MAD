@@ -6,6 +6,11 @@ export class UserController {
         resp.setHeader('Content-type', 'application/json');
         let user;
         try {
+            if (req.params.id.length !== 24) {
+                const error = new Error('Id invalid');
+                error.name = 'UserError';
+                throw error;
+            }
             user = await User.findById(req.params.id).populate('comics');
         }
         catch (error) {
@@ -42,14 +47,12 @@ export class UserController {
             const error = new Error('Invalid user or password');
             error.name = 'UserAuthorizationError';
             next(error);
-            console.log('erooooor');
             return;
         }
         const tokenPayLoad = {
             id: findUser.id,
             name: findUser.name,
         };
-        console.log('pasa');
         const token = aut.createToken(tokenPayLoad);
         resp.setHeader('Content-type', 'application/json');
         resp.status(201);
