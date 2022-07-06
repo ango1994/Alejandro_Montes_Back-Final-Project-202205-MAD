@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { UserController } from '../controllers/user.controller.js';
 import { loginRequired } from '../middlewares/login.required.js';
+import { userRequiredForTasks } from '../middlewares/user-required.js';
 
 export const userController = new UserController();
 export const userRouter = Router();
@@ -13,4 +14,9 @@ userRouter.delete(
     loginRequired,
     userController.deleteController
 );
-userRouter.patch('/:id', loginRequired, userController.patchController);
+userRouter.patch(
+    '/:id',
+    loginRequired,
+    userRequiredForTasks,
+    userController.patchController
+);
