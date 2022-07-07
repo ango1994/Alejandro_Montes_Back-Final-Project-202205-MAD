@@ -1,39 +1,30 @@
-import { NextFunction, Request, response, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { HydratedDocument } from 'mongoose';
-import { iTokenPayload } from '../interfaces/token.js';
+import { ExtRequest, iTokenPayload } from '../interfaces/token.js';
 import { User } from '../models/user.model.js';
 import * as aut from '../services/authorization.js';
 
 export class UserController {
-    getController = async (
-        req: Request,
-        resp: Response,
-        next: NextFunction
-    ) => {
-        resp.setHeader('Content-type', 'application/json');
+    getController = async (req: Request, res: Response, next: NextFunction) => {
+        res.setHeader('Content-type', 'application/json');
         let user;
         try {
-            if (req.params.id.length !== 24) {
-                const error = new Error('Id invalid');
-                error.name = 'UserError';
-                throw error;
-            }
             user = await User.findById(req.params.id).populate('comics');
         } catch (error) {
             next(error);
             return;
         }
         if (user) {
-            resp.send(JSON.stringify(user));
+            res.send(JSON.stringify(user));
         } else {
-            resp.status(404);
-            resp.send(JSON.stringify({}));
+            res.status(404);
+            res.send(JSON.stringify({}));
         }
     };
 
     postController = async (
         req: Request,
-        resp: Response,
+        res: Response,
         next: NextFunction
     ) => {
         let newUser: HydratedDocument<any>;
@@ -44,18 +35,18 @@ export class UserController {
             next(error);
             return;
         }
-        resp.setHeader('Content-type', 'application/json');
-        resp.status(201);
-        resp.send(JSON.stringify(newUser));
+        res.setHeader('Content-type', 'application/json');
+        res.status(201);
+        res.send(JSON.stringify(newUser));
     };
 
     loginController = async (
         req: Request,
-        resp: Response,
+        res: Response,
         next: NextFunction
     ) => {
         const findUser: any = await User.findOne({ name: req.body.name });
-        console.log(findUser);
+
         if (
             !findUser ||
             !(await aut.compare(req.body.password, findUser.password))
@@ -71,9 +62,9 @@ export class UserController {
         };
 
         const token = aut.createToken(tokenPayLoad);
-        resp.setHeader('Content-type', 'application/json');
-        resp.status(201);
-        resp.send(JSON.stringify({ token, id: findUser.id }));
+        res.setHeader('Content-type', 'application/json');
+        res.status(201);
+        res.send(JSON.stringify({ token, id: findUser.id }));
     };
 
     deleteController = async (
@@ -82,8 +73,10 @@ export class UserController {
         next: NextFunction
     ) => {
         try {
-            const deletedItem = await User.findByIdAndDelete(req.params.id);
-            response.status(202);
+            const deletedItem = await User.findByIdAndDelete(
+                (req as unknown as ExtRequest).tokenPayload.id
+            );
+            res.status(202);
             res.send(JSON.stringify(deletedItem));
         } catch (error) {
             next(error);
@@ -92,17 +85,23 @@ export class UserController {
 
     patchController = async (
         req: Request,
-        resp: Response,
+        res: Response,
         next: NextFunction
     ) => {
-        const newItem = await User.findByIdAndUpdate(req.params.id, req.body);
-        if (!newItem || req.body.email) {
-            const error = new Error('Invalid user');
-            error.name = 'UserError';
+        try {
+            const newItem = await User.findByIdAndUpdate(
+                req.params.id,
+                req.body
+            );
+            if (!newItem || req.body.email) {
+                const error = new Error('Invalid user');
+                error.name = 'UserError';
+                throw error;
+            }
+            res.setHeader('Content-type', 'application/json');
+            res.send(JSON.stringify(newItem));
+        } catch (error) {
             next(error);
-            return;
         }
-        resp.setHeader('Content-type', 'application/json');
-        resp.send(JSON.stringify(newItem));
     };
 }

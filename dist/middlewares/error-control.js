@@ -3,7 +3,8 @@ const errors = {
     CastError: 422,
     UserError: 404,
     UserAuthorizationError: 401,
-    TokenError: 401, // Unauthorized
+    TokenError: 401,
+    RangeError: 600,
 };
 export const errorControl = (error, req, resp, next) => {
     req;

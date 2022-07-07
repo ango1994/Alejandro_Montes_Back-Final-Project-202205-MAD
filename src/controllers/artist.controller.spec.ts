@@ -72,7 +72,7 @@ describe('Given a instantiated controller ArtistController', () => {
 
     describe('When method postController is called', () => {
         test('Then resp.send should be called with the data', async () => {
-            Artist.create = jest.fn().mockRejectedValue(null);
+            Artist.create = jest.fn().mockRejectedValueOnce(null);
             await controller.postController(
                 req as Request,
                 res as Response,

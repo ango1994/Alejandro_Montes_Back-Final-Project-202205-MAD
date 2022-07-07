@@ -3,7 +3,11 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
 export const encrypt = async (source, salt = 10) => {
-    return await bcrypt.hash(source, salt);
+    if (source) {
+        return await bcrypt.hash(source, salt);
+    }
+    else
+        return;
 };
 export const compare = async (value, hash) => {
     return await bcrypt.compare(value, hash);
@@ -14,4 +18,3 @@ export const createToken = (tokenPayLoad) => {
 export const verifyToken = (token) => {
     return jwt.verify(token, process.env.SECRET);
 };
-export const checkPatchRequestUser = () => { };

@@ -6,7 +6,9 @@ import { iTokenPayload } from '../interfaces/token.js';
 dotenv.config();
 
 export const encrypt = async (source: string, salt = 10) => {
-    return await bcrypt.hash(source, salt);
+    if (source) {
+        return await bcrypt.hash(source, salt);
+    } else return;
 };
 
 export const compare = async (value: string, hash: string) => {
@@ -20,5 +22,3 @@ export const createToken = (tokenPayLoad: iTokenPayload) => {
 export const verifyToken = (token: string) => {
     return jwt.verify(token, process.env.SECRET as string);
 };
-
-export const checkPatchRequestUser = () => {};
