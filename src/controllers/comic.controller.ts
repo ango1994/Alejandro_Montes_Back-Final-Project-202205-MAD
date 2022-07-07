@@ -34,12 +34,6 @@ export class ComicController {
             next(error);
         }
     };
-    patchController = async (req: Request, resp: Response) => {
-        const newItem = await Comic.findByIdAndUpdate(req.params.id, req.body);
-        resp.setHeader('Content-type', 'application/json');
-        resp.send(JSON.stringify(newItem));
-    };
-
     searchController = async (
         req: Request,
         resp: Response,
