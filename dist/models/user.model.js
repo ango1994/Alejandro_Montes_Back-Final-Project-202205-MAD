@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import mongoose from 'mongoose';
 import { mongooseConnect } from '../db/mongoose.js';
 import { isEmail } from '../helpers/is.email.js';
