@@ -84,7 +84,7 @@ describe('Given a instantiated controller Usercontroller', () => {
             expect(next).toBeCalled();
         });
     });
-    describe('When method deleteController is called', () => {
+    describe('When method deleteController is called with a valid id', () => {
         test('Then an user should be deleted', async () => {
             req = {
                 params: { id: '123456789012345678901234' },
@@ -96,16 +96,39 @@ describe('Given a instantiated controller Usercontroller', () => {
             expect(res.status).toBeCalledWith(202);
         });
     });
+    describe('When method patchController is called with a invalid id', () => {
+        test('Then an next should be called', async () => {
+            req = {
+                params: { id: '123456789012345678901234' },
+            };
+            await controller.patchController(req, res, next);
+            expect(next).toBeCalled();
+        });
+    });
+    describe('When method patchController is called with email in the body req', () => {
+        test('Then next should be called', async () => {
+            req = {
+                params: { id: '123456789012345678901234' },
+                tokenPayload: { _id: '123456789012345678901234' },
+                body: { name: 'test', email: 'test@test.com' },
+            };
+            const findUser = '123456789012345678901234';
+            User.findByIdAndUpdate = jest.fn().mockResolvedValue(findUser);
+            await controller.patchController(req, res, next);
+            expect(next).toBeCalled();
+        });
+    });
     describe('When method patchController is called', () => {
         test('Then an user should be patched', async () => {
             req = {
                 params: { id: '123456789012345678901234' },
                 tokenPayload: { _id: '123456789012345678901234' },
+                body: { name: 'test' },
             };
             const findUser = '123456789012345678901234';
-            User.findById = jest.fn().mockResolvedValue(findUser);
-            await controller.deleteController(req, res, next);
-            expect(res.status).toBeCalledWith(202);
+            User.findByIdAndUpdate = jest.fn().mockResolvedValue(findUser);
+            await controller.patchController(req, res, next);
+            expect(res.send).toBeCalled();
         });
     });
 });

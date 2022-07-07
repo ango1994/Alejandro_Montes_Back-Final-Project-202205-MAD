@@ -96,8 +96,7 @@ export class UserController {
             if (!newItem || req.body.email) {
                 const error = new Error('Invalid user');
                 error.name = 'UserError';
-                next(error);
-                return;
+                throw error;
             }
             res.setHeader('Content-type', 'application/json');
             res.send(JSON.stringify(newItem));
