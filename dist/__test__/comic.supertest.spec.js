@@ -25,6 +25,23 @@ describe('Given the routes of "/comic', () => {
         Artist.collection.drop();
         server.close();
     });
+    describe('When method PATCH is used with the required params', () => {
+        test('Then status should be 200', async () => {
+            const newComic = {
+                score: [
+                    {
+                        user: data.users[0].id,
+                        scored: 9,
+                    },
+                ],
+            };
+            const response = await request(app)
+                .patch(`/comic/score/${data.comics[0].id}`)
+                .set('Authorization', 'Bearer ' + token)
+                .send(newComic.score);
+            expect(response.statusCode).toBe(200);
+        });
+    });
     describe('When method GETALL is used', () => {
         test('Then status should be 200', async () => {
             const response = await request(app).get('/comic');
@@ -68,18 +85,6 @@ describe('Given the routes of "/comic', () => {
         test('Then status should be 406', async () => {
             const response = await request(app).post(`/comic/`).send(newComic);
             expect(response.status).toBe(201);
-        });
-    });
-    describe('When method PATCH is used with the required params', () => {
-        test('Then status should be 200', async () => {
-            const newComic = {
-                score: [{ user: data.users[0].id, score: 5 }],
-            };
-            const response = await request(app)
-                .patch(`/comic/score/${data.comics[0].id}`)
-                .set('Authorization', 'Bearer ' + token)
-                .send(newComic);
-            expect(response.statusCode).toBe(200);
         });
     });
 });

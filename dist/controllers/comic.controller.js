@@ -42,10 +42,10 @@ export class ComicController {
         const findComic = await Comic.findById(req.params.id);
         const alreadyScored = findComic?.score.find((userScore) => String(userScore.user) === String(userID));
         if (alreadyScored) {
-            alreadyScored.score = req.body.score;
+            alreadyScored.scored = req.body.score;
         }
         else {
-            findComic?.score.push({ user: userID, score: req.body.score });
+            findComic?.score.push({ user: userID, scored: req.body.score });
         }
         const newComic = findComic?.save();
         resp.setHeader('Content-type', 'application/json');

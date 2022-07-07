@@ -3,6 +3,8 @@ import { server } from '..';
 import { app } from '../app';
 import { initializeDB } from '../db/initialize.db';
 import { mongooseConnect } from '../db/mongoose';
+
+import { iRelationFieldscore } from '../interfaces/relation.field.score';
 import { Artist } from '../models/artist.model';
 import { Comic, iComic } from '../models/comic.model';
 import { User } from '../models/user.model';
@@ -25,6 +27,23 @@ describe('Given the routes of "/comic', () => {
         Comic.collection.drop();
         Artist.collection.drop();
         server.close();
+    });
+    describe('When method PATCH is used with the required params', () => {
+        test('Then status should be 200', async () => {
+            const newComic: Partial<iComic> = {
+                score: [
+                    {
+                        user: data.users[0].id as iRelationFieldscore,
+                        scored: 9,
+                    },
+                ],
+            };
+            const response = await request(app)
+                .patch(`/comic/score/${data.comics[0].id}`)
+                .set('Authorization', 'Bearer ' + token)
+                .send(newComic.score);
+            expect(response.statusCode).toBe(200);
+        });
     });
     describe('When method GETALL is used', () => {
         test('Then status should be 200', async () => {
@@ -73,18 +92,6 @@ describe('Given the routes of "/comic', () => {
         test('Then status should be 406', async () => {
             const response = await request(app).post(`/comic/`).send(newComic);
             expect(response.status).toBe(201);
-        });
-    });
-    describe('When method PATCH is used with the required params', () => {
-        test('Then status should be 200', async () => {
-            const newComic: Partial<iComic> = {
-                score: [{ user: data.users[0].id, score: 5 }],
-            };
-            const response = await request(app)
-                .patch(`/comic/score/${data.comics[0].id}`)
-                .set('Authorization', 'Bearer ' + token)
-                .send(newComic);
-            expect(response.statusCode).toBe(200);
         });
     });
 });
