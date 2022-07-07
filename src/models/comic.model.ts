@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import mongoose from 'mongoose';
 import { mongooseConnect } from '../db/mongoose.js';
 import { iRelationField } from '../interfaces/relation.field.js';
