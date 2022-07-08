@@ -85,7 +85,6 @@ describe('Given a instantiated controller ComicController', () => {
                 params: { id: '123456789012345678901235' },
                 body: { scored: 7 },
                 tokenPayload: { id: '123456789012345678901234' },
-                query: { q: 'test' },
             };
             Comic.findById = jest.fn().mockResolvedValueOnce({
                 score: [{ user: '123456789012345678901234', scored: 7 }],
@@ -100,8 +99,22 @@ describe('Given a instantiated controller ComicController', () => {
             req = {
                 params: { id: '123456789012345678901234' },
                 body: { score: 7 },
-                tokenPayload: { _id: '123456789012345678901234' },
-                query: { q: 'test' },
+                tokenPayload: { id: '123456789012345678901234' },
+            };
+            Comic.findById = jest.fn().mockResolvedValueOnce({
+                score: [],
+                save: jest.fn(),
+            });
+            await controller.patchScoreController(req, res, next);
+            expect(res.send).toHaveBeenCalled();
+        });
+    });
+    describe('When method patchController is called', () => {
+        test('Then res.send should be called', async () => {
+            req = {
+                params: { id: '123456789012345678901234' },
+                body: { score: 7 },
+                tokenPayload: { id: '123456789012345678901234' },
             };
             Comic.findById = jest.fn().mockResolvedValueOnce(null);
             await controller.patchScoreController(req, res, next);

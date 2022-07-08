@@ -10,8 +10,7 @@ export class ComicController {
         const comic = await Comic.findById(req.params.id).populate('artist');
         if (comic) {
             resp.send(JSON.stringify(comic));
-        }
-        else {
+        } else {
             resp.status(404);
             resp.send(JSON.stringify({}));
         }
@@ -22,8 +21,7 @@ export class ComicController {
             resp.setHeader('Content-type', 'application/json');
             resp.status(201);
             resp.send(JSON.stringify(newItem));
-        }
-        catch (error) {
+        } catch (error) {
             next(error);
         }
     };
@@ -41,18 +39,20 @@ export class ComicController {
         if (!findComic) {
             error.name = 'UserError';
             next(error);
-        }
-        else {
+        } else {
             if (req.body.score !== typeof Number) {
                 error.name = 'ValidationError';
             }
-            const alreadyScored = findComic?.score.find((userScore) => String(userScore.user) === String(userID));
+            const alreadyScored = findComic.score.find(
+                (userScore) => String(userScore.user) === String(userID)
+            );
             if (alreadyScored) {
                 alreadyScored.scored = req.body.score;
-                findComic.score = findComic?.score.map((item) => item.user === alreadyScored.user ? alreadyScored : item);
-            }
-            else {
-                findComic?.score.push({ user: userID, scored: req.body.score });
+                findComic.score = findComic?.score.map((item) =>
+                    item.user === alreadyScored.user ? alreadyScored : item
+                );
+            } else {
+                findComic.score.push({ user: userID, scored: req.body.score });
             }
         }
         const newComic = findComic?.save();
