@@ -185,7 +185,7 @@ describe('Given a instantiated controller Usercontroller', () => {
             (req as Partial<ExtRequest>) = {
                 params: { id: '123456789012345678901234' },
                 tokenPayload: { _id: '123456789012345678901234' },
-                body: { name: 'test' },
+                body: { password: 'test' },
             };
             const findUser = '123456789012345678901234';
             User.findByIdAndUpdate = jest.fn().mockResolvedValue(findUser);

@@ -92,22 +92,7 @@ describe('Given a instantiated controller ComicController', () => {
             expect(next).toHaveBeenCalled();
         });
     });
-    describe('When method searchController is called with a query with less than 3 characters', () => {
-        test('Then next should be called', async () => {
-            (req as Partial<Request>) = {
-                params: { id: '123456789012345678901234' },
-                body: { name: 'test' },
-                query: { q: 'te' },
-            };
-            Comic.find = jest.fn().mockResolvedValueOnce(req.query);
-            await controller.searchController(
-                req as Request,
-                res as Response,
-                next as NextFunction
-            );
-            expect(next).toHaveBeenCalled();
-        });
-    });
+
     describe('When method searchController is called with a query with 3 or more characters', () => {
         test('Then res.send should be called', async () => {
             (req as Partial<Request>) = {
@@ -115,11 +100,7 @@ describe('Given a instantiated controller ComicController', () => {
                 query: { q: 'test' },
             };
             Comic.find = jest.fn().mockResolvedValueOnce(req.query);
-            await controller.searchController(
-                req as Request,
-                res as Response,
-                next as NextFunction
-            );
+            await controller.searchController(req as Request, res as Response);
             expect(res.send).toHaveBeenCalledWith(JSON.stringify(req.query));
         });
     });

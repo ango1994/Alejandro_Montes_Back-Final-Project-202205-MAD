@@ -93,7 +93,7 @@ export class UserController {
                 req.params.id,
                 req.body
             );
-            if (!newItem || req.body.email) {
+            if (!newItem || req.body.email || req.body.name) {
                 const error = new Error('Invalid user');
                 error.name = 'UserError';
                 throw error;

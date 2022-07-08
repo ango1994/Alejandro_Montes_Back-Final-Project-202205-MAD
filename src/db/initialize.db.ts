@@ -84,16 +84,17 @@ export const initializeDB = async () => {
     );
     const users = await User.insertMany(mockUsers);
     let finalComics = [];
-    for (let i = 0; i < comics.length; i++) {
-        const comic = comics[i];
-        finalComics[i] = await Comic.findByIdAndUpdate(
-            comic.id,
+    finalComics = [
+        await Comic.findByIdAndUpdate(
+            comics[0].id,
             {
-                $set: { score: [{ user: users[i].id, score: i }] },
+                $set: { score: [{ user: users[0].id, scored: 9 }] },
             },
             { new: true }
-        );
-    }
+        ),
+        comics[1],
+    ];
+
     connect.disconnect();
     return {
         comics: finalComics,

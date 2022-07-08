@@ -17,30 +17,12 @@ describe('Given the routes of "/comic', () => {
             id: data.users[0].id,
             name: data.users[0].name,
         });
-        console.log(token);
     });
     afterAll(async () => {
         User.collection.drop();
         Comic.collection.drop();
         Artist.collection.drop();
         server.close();
-    });
-    describe('When method PATCH is used with the required params', () => {
-        test('Then status should be 200', async () => {
-            const newComic = {
-                score: [
-                    {
-                        user: data.users[0].id,
-                        scored: 9,
-                    },
-                ],
-            };
-            const response = await request(app)
-                .patch(`/comic/score/${data.comics[0].id}`)
-                .set('Authorization', 'Bearer ' + token)
-                .send(newComic.score);
-            expect(response.statusCode).toBe(200);
-        });
     });
     describe('When method GETALL is used', () => {
         test('Then status should be 200', async () => {
@@ -61,7 +43,7 @@ describe('Given the routes of "/comic', () => {
         });
     });
     describe('When method SEARCH is used', () => {
-        test('Then status should be 404', async () => {
+        test('Then status should be 200', async () => {
             const response = await request(app).get(`/comic/search?q=watchmen`);
             expect(response.status).toBe(200);
         });
@@ -85,6 +67,30 @@ describe('Given the routes of "/comic', () => {
         test('Then status should be 406', async () => {
             const response = await request(app).post(`/comic/`).send(newComic);
             expect(response.status).toBe(201);
+        });
+    });
+    describe('When method PATCH is used with the required params', () => {
+        test('Then status should be 200', async () => {
+            const newComic = {
+                score: 9,
+            };
+            const response = await request(app)
+                .patch(`/comic/score/${data.comics[0].id}`)
+                .set('Authorization', 'Bearer ' + token)
+                .send(newComic);
+            expect(response.statusCode).toStrictEqual(202);
+        });
+    });
+    describe('When method PATCH is used with the required params', () => {
+        test('Then status should be 200', async () => {
+            const newComic = {
+                score: 4,
+            };
+            const response = await request(app)
+                .patch(`/comic/score/${data.comics[1].id}`)
+                .set('Authorization', 'Bearer ' + token)
+                .send(newComic);
+            expect(response.statusCode).toStrictEqual(202);
         });
     });
 });

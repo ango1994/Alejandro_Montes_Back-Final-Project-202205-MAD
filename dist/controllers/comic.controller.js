@@ -27,10 +27,7 @@ export class ComicController {
             next(error);
         }
     };
-    searchController = async (req, resp, next) => {
-        if (req.query.q.length < 3) {
-            next();
-        }
+    searchController = async (req, resp) => {
         const comics = await Comic.find({
             name: { $regex: req.query.q, $options: 'i' },
         });
@@ -49,6 +46,7 @@ export class ComicController {
         }
         const newComic = findComic?.save();
         resp.setHeader('Content-type', 'application/json');
+        resp.status(202);
         resp.send(JSON.stringify(newComic));
     };
 }
