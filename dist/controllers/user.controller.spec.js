@@ -108,7 +108,7 @@ describe('Given a instantiated controller Usercontroller', () => {
                 body: { name: 'test', email: 'test@test.com' },
             };
             const findUser = '123456789012345678901234';
-            User.findByIdAndUpdate = jest.fn().mockResolvedValue(findUser);
+            User.findById = jest.fn().mockResolvedValue(findUser);
             await controller.patchController(req, res, next);
             expect(next).toBeCalled();
         });
@@ -117,11 +117,34 @@ describe('Given a instantiated controller Usercontroller', () => {
         test('Then an user should be patched', async () => {
             req = {
                 params: { id: '123456789012345678901234' },
-                tokenPayload: { _id: '123456789012345678901234' },
-                body: { password: 'test' },
+                tokenPayload: { id: '123456789012345678901234' },
+                body: { comic: '123456789012345678901234' },
             };
-            const findUser = '123456789012345678901234';
-            User.findByIdAndUpdate = jest.fn().mockResolvedValue(findUser);
+            User.findById = jest.fn().mockResolvedValue({
+                comics: [
+                    '123456789012345678901234',
+                    '123456789012345678901235',
+                ],
+                save: jest.fn(),
+            });
+            await controller.patchController(req, res, next);
+            expect(res.send).toBeCalled();
+        });
+    });
+    describe('When method patchController is called', () => {
+        test('Then an user should be patched', async () => {
+            req = {
+                params: { id: '123456789012345678901234' },
+                tokenPayload: { id: '123456789012345678901234' },
+                body: { comic: '123456789012345678901239' },
+            };
+            User.findById = jest.fn().mockResolvedValue({
+                comics: [
+                    '123456789012345678901234',
+                    '123456789012345678901235',
+                ],
+                save: jest.fn(),
+            });
             await controller.patchController(req, res, next);
             expect(res.send).toBeCalled();
         });
