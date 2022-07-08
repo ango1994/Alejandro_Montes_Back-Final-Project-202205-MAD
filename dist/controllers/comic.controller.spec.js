@@ -8,7 +8,7 @@ describe('Given a instantiated controller ComicController', () => {
     beforeEach(() => {
         req = {
             params: { id: '1' },
-            body: { name: 'test', rol: 'test' },
+            body: { name: 'test', rol: 'test', score: 7 },
         };
         res = {
             setHeader: jest.fn(),
@@ -79,22 +79,40 @@ describe('Given a instantiated controller ComicController', () => {
             expect(res.send).toHaveBeenCalledWith(JSON.stringify(req.query));
         });
     });
-    describe('When method patchController is called', () => {
+    describe('When method patchController is called with a valid id and a valid score', () => {
         test('Then res.send should be called', async () => {
             req = {
-                params: { id: '123456789012345678901235' },
-                body: { scored: 7 },
+                params: { id: '62c834dae9fb7865c9e48044' },
+                body: { score: 7 },
                 tokenPayload: { id: '123456789012345678901234' },
             };
             Comic.findById = jest.fn().mockResolvedValueOnce({
-                score: [{ user: '123456789012345678901234', scored: 7 }],
+                score: [{ user: '123456789012345678901234' }],
                 save: jest.fn(),
             });
             await controller.patchScoreController(req, res, next);
             expect(res.send).toHaveBeenCalled();
         });
     });
-    describe('When method patchController is called', () => {
+    describe('When method patchController is called with a valid id and a invalid score', () => {
+        test('Then res.send should be called', async () => {
+            req = {
+                params: { id: '62c834dae9fb7865c9e48044' },
+                body: { score: 'test' },
+                tokenPayload: { id: '123456789012345678901234' },
+            };
+            Comic.findById = jest.fn().mockResolvedValueOnce({
+                score: [
+                    { user: '123456789012345678901234', score: 3 },
+                    { user: '123456789012345678901235', score: 3 },
+                ],
+                save: jest.fn(),
+            });
+            await controller.patchScoreController(req, res, next);
+            expect(next).toHaveBeenCalled();
+        });
+    });
+    describe('When method patchController is called with valid id and valid score and there is no previous score', () => {
         test('Then res.send should be called', async () => {
             req = {
                 params: { id: '123456789012345678901234' },
@@ -109,16 +127,16 @@ describe('Given a instantiated controller ComicController', () => {
             expect(res.send).toHaveBeenCalled();
         });
     });
-    describe('When method patchController is called', () => {
-        test('Then res.send should be called', async () => {
+    describe('When method patchController is called with an invalid id and valid score and there is no previous score', () => {
+        test('Then next should be called', async () => {
             req = {
-                params: { id: '123456789012345678901234' },
-                body: { score: 7 },
-                tokenPayload: { id: '123456789012345678901234' },
+                params: { id: '12345678901234' },
+                body: { score: 9 },
+                tokenPayload: { id: '123456' },
             };
-            Comic.findById = jest.fn().mockResolvedValueOnce(null);
+            Comic.findById = jest.fn().mockResolvedValueOnce({});
             await controller.patchScoreController(req, res, next);
-            expect(res.send).toHaveBeenCalled();
+            expect(next).toHaveBeenCalled();
         });
     });
 });

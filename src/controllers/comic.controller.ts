@@ -49,30 +49,35 @@ export class ComicController {
     ) => {
         const userID = (req as unknown as ExtRequest).tokenPayload.id;
         const findComic = await Comic.findById(req.params.id);
-        const error = new Error();
-        if (!findComic) {
+        console.log(findComic);
+        console.log(req.body.score);
+        const error = new Error('Comic or score invalid');
+        if (!findComic || Number.isNaN(Number(req.body.score))) {
             error.name = 'UserError';
             next(error);
         } else {
-            if (req.body.score !== typeof Number) {
-                error.name = 'ValidationError';
-            }
-            const alreadyScored = findComic?.score.find(
-                (userScore) => String(userScore.user) === String(userID)
-            );
-            if (alreadyScored) {
-                alreadyScored.scored = req.body.score;
-                findComic.score = findComic?.score.map((item) =>
-                    item.user === alreadyScored.user ? alreadyScored : item
+            try {
+                const alreadyScored = findComic.score.find(
+                    (userScore) => String(userScore.user) === String(userID)
                 );
-            } else {
-                findComic?.score.push({ user: userID, scored: req.body.score });
+                if (alreadyScored) {
+                    alreadyScored.scored = req.body.score;
+                    findComic.score = findComic?.score.map((item) =>
+                        item.user === alreadyScored.user ? alreadyScored : item
+                    );
+                } else {
+                    findComic?.score.push({
+                        user: userID,
+                        scored: req.body.score,
+                    });
+                }
+                const newComic = await findComic.save();
+                resp.setHeader('Content-type', 'application/json');
+                resp.status(202);
+                resp.send(JSON.stringify(newComic));
+            } catch (error) {
+                next(error);
             }
         }
-
-        const newComic = findComic?.save();
-        resp.setHeader('Content-type', 'application/json');
-        resp.status(202);
-        resp.send(JSON.stringify(newComic));
     };
 }
