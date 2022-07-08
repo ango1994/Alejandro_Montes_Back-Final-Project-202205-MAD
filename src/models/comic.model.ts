@@ -14,7 +14,7 @@ export interface iComic {
     publicationDate: string;
     category: 'american' | 'european' | 'manga';
     artist: Array<iRelationField>;
-    score: Array<{ user: iRelationFieldscore; score: number }>;
+    score: Array<{ user: iRelationFieldscore; scored: number }>;
 }
 
 const comicSchema = new mongoose.Schema({
@@ -31,7 +31,7 @@ const comicSchema = new mongoose.Schema({
     score: [
         {
             user: { type: mongoose.Types.ObjectId, ref: 'User' },
-            score: {
+            scored: {
                 type: mongoose.SchemaTypes.Number,
                 required: true,
                 min: 0,

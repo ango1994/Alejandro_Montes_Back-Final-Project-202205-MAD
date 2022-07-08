@@ -16,7 +16,7 @@ const comicSchema = new mongoose.Schema({
     score: [
         {
             user: { type: mongoose.Types.ObjectId, ref: 'User' },
-            score: {
+            scored: {
                 type: mongoose.SchemaTypes.Number,
                 required: true,
                 min: 0,

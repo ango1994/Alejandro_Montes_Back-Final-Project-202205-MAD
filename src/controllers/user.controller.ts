@@ -67,20 +67,12 @@ export class UserController {
         res.send(JSON.stringify({ token, id: findUser.id }));
     };
 
-    deleteController = async (
-        req: Request,
-        res: Response,
-        next: NextFunction
-    ) => {
-        try {
-            const deletedItem = await User.findByIdAndDelete(
-                (req as unknown as ExtRequest).tokenPayload.id
-            );
-            res.status(202);
-            res.send(JSON.stringify(deletedItem));
-        } catch (error) {
-            next(error);
-        }
+    deleteController = async (req: Request, res: Response) => {
+        const deletedItem = await User.findByIdAndDelete(
+            (req as unknown as ExtRequest).tokenPayload.id
+        );
+        res.status(202);
+        res.send(JSON.stringify(deletedItem));
     };
 
     patchController = async (
@@ -93,7 +85,7 @@ export class UserController {
                 req.params.id,
                 req.body
             );
-            if (!newItem || req.body.email) {
+            if (!newItem || req.body.email || req.body.name) {
                 const error = new Error('Invalid user');
                 error.name = 'UserError';
                 throw error;

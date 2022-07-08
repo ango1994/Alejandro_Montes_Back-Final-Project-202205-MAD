@@ -6,5 +6,5 @@ export interface iTokenPayload extends JwtPayload {
 }
 
 export interface ExtRequest extends Request {
-    tokenPayload: JwtPayload; // iTokenPayload;
+    tokenPayload: JwtPayload;
 }
