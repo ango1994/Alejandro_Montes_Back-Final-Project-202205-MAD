@@ -10,7 +10,8 @@ export class ComicController {
         const comic = await Comic.findById(req.params.id).populate('artist');
         if (comic) {
             resp.send(JSON.stringify(comic));
-        } else {
+        }
+        else {
             resp.status(404);
             resp.send(JSON.stringify({}));
         }
@@ -21,7 +22,8 @@ export class ComicController {
             resp.setHeader('Content-type', 'application/json');
             resp.status(201);
             resp.send(JSON.stringify(newItem));
-        } catch (error) {
+        }
+        catch (error) {
             next(error);
         }
     };
@@ -35,21 +37,21 @@ export class ComicController {
     patchScoreController = async (req, resp, next) => {
         const userID = req.tokenPayload.id;
         const findComic = await Comic.findById(req.params.id);
+        console.log(findComic);
+        console.log(req.body.score);
         const error = new Error('Comic or score invalid');
         if (!findComic || Number.isNaN(Number(req.body.score))) {
             error.name = 'UserError';
             next(error);
-        } else {
+        }
+        else {
             try {
-                const alreadyScored = findComic.score.find(
-                    (userScore) => String(userScore.user) === String(userID)
-                );
+                const alreadyScored = findComic.score.find((userScore) => String(userScore.user) === String(userID));
                 if (alreadyScored) {
                     alreadyScored.scored = req.body.score;
-                    findComic.score = findComic?.score.map((item) =>
-                        item.user === alreadyScored.user ? alreadyScored : item
-                    );
-                } else {
+                    findComic.score = findComic?.score.map((item) => item.user === alreadyScored.user ? alreadyScored : item);
+                }
+                else {
                     findComic?.score.push({
                         user: userID,
                         scored: req.body.score,
@@ -59,7 +61,8 @@ export class ComicController {
                 resp.setHeader('Content-type', 'application/json');
                 resp.status(202);
                 resp.send(JSON.stringify(newComic));
-            } catch (error) {
+            }
+            catch (error) {
                 next(error);
             }
         }

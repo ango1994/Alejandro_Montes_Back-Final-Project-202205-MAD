@@ -81,17 +81,30 @@ export class UserController {
         next: NextFunction
     ) => {
         try {
-            const newItem = await User.findByIdAndUpdate(
-                req.params.id,
-                req.body
-            );
-            if (!newItem || req.body.email || req.body.name) {
+            const user = await User.findById(req.params.id);
+            if (!user || req.body.email || req.body.name) {
                 const error = new Error('Invalid user');
                 error.name = 'UserError';
                 throw error;
+            } else {
+                if (req.body.comic) {
+                    const comic = req.body.comic;
+                    console.log(comic);
+                    const alreadyFavComic = user.comics.find(
+                        (item) => String(item) === String(comic)
+                    );
+                    if (alreadyFavComic) {
+                        user.comics = user.comics.filter(
+                            (item) => String(item) !== String(comic)
+                        );
+                    } else {
+                        user.comics.push(comic);
+                    }
+                }
             }
+            const updatedUser = await user.save();
             res.setHeader('Content-type', 'application/json');
-            res.send(JSON.stringify(newItem));
+            res.send(JSON.stringify(updatedUser));
         } catch (error) {
             next(error);
         }
