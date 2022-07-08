@@ -51,15 +51,10 @@ export class UserController {
         res.status(201);
         res.send(JSON.stringify({ token, id: findUser.id }));
     };
-    deleteController = async (req, res, next) => {
-        try {
-            const deletedItem = await User.findByIdAndDelete(req.tokenPayload.id);
-            res.status(202);
-            res.send(JSON.stringify(deletedItem));
-        }
-        catch (error) {
-            next(error);
-        }
+    deleteController = async (req, res) => {
+        const deletedItem = await User.findByIdAndDelete(req.tokenPayload.id);
+        res.status(202);
+        res.send(JSON.stringify(deletedItem));
     };
     patchController = async (req, res, next) => {
         try {

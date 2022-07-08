@@ -56,7 +56,7 @@ describe('Given the routes of "/artist', () => {
         });
     });
     describe('When method POST is used and the required data is not passed', () => {
-        test('Then status should be 200', async () => {
+        test('Then status should be 406', async () => {
             const newArtist: Partial<iArtist> = {
                 about: 'test',
                 comics: [data.comics[0].id],

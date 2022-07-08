@@ -105,31 +105,32 @@ describe('Given a instantiated controller ComicController', () => {
         });
     });
 
-    describe('When method postController is called', () => {
+    describe('When method patchController is called', () => {
         test('Then res.send should be called', async () => {
             (req as Partial<ExtRequest>) = {
-                params: { id: '123456789012345678901234' },
-                body: { name: 'test' },
-                tokenPayload: { _id: '123456789012345678901234' },
+                params: { id: '123456789012345678901235' },
+                body: { scored: 7 },
+                tokenPayload: { id: '123456789012345678901234' },
                 query: { q: 'test' },
             };
             Comic.findById = jest.fn().mockResolvedValueOnce({
-                score: [{ user: '123456789012345678901234' }, {}],
+                score: [{ user: '123456789012345678901234', scored: 7 }],
                 save: jest.fn(),
             });
 
             await controller.patchScoreController(
                 req as Request,
-                res as Response
+                res as Response,
+                next as NextFunction
             );
             expect(res.send).toHaveBeenCalled();
         });
     });
-    describe('When method postController is called', () => {
+    describe('When method patchController is called', () => {
         test('Then res.send should be called', async () => {
             (req as Partial<ExtRequest>) = {
                 params: { id: '123456789012345678901234' },
-                body: { name: 'test' },
+                body: { score: 7 },
                 tokenPayload: { _id: '123456789012345678901234' },
                 query: { q: 'test' },
             };
@@ -137,7 +138,8 @@ describe('Given a instantiated controller ComicController', () => {
 
             await controller.patchScoreController(
                 req as Request,
-                res as Response
+                res as Response,
+                next as NextFunction
             );
             expect(res.send).toHaveBeenCalled();
         });

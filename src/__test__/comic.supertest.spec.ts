@@ -71,7 +71,7 @@ describe('Given the routes of "/comic', () => {
             publicationDate: '67',
             score: [],
         };
-        test('Then status should be 406', async () => {
+        test('Then status should be 201', async () => {
             const response = await request(app).post(`/comic/`).send(newComic);
             expect(response.status).toBe(201);
         });
