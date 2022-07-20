@@ -45,7 +45,9 @@ export class UserController {
         res: Response,
         next: NextFunction
     ) => {
-        const findUser: any = await User.findOne({ name: req.body.name });
+        const findUser: any = await User.findOne({
+            name: req.body.name,
+        }).populate('comics');
 
         if (
             !findUser ||
@@ -64,7 +66,7 @@ export class UserController {
         const token = aut.createToken(tokenPayLoad);
         res.setHeader('Content-type', 'application/json');
         res.status(201);
-        res.send(JSON.stringify({ token, id: findUser.id }));
+        res.send(JSON.stringify({ token, user: findUser }));
     };
 
     deleteController = async (req: Request, res: Response) => {
@@ -87,12 +89,12 @@ export class UserController {
                 error.name = 'UserError';
                 throw error;
             } else {
+                let alreadyFavComic;
                 if (req.body.comic) {
                     const comic = req.body.comic;
-                    console.log(comic);
-                    const alreadyFavComic = user.comics.find(
-                        (item) => String(item) === String(comic)
-                    );
+                    alreadyFavComic = user.comics.find((item) => {
+                        return JSON.stringify(item) === JSON.stringify(comic);
+                    });
                     if (alreadyFavComic) {
                         user.comics = user.comics.filter(
                             (item) => String(item) !== String(comic)
@@ -102,7 +104,7 @@ export class UserController {
                     }
                 }
             }
-            const updatedUser = await user.save();
+            const updatedUser = await (await user.save()).populate('comics');
             res.setHeader('Content-type', 'application/json');
             res.send(JSON.stringify(updatedUser));
         } catch (error) {
