@@ -9,6 +9,7 @@
         "start:ts": "tsc --watch",
         "start:build": "cross-env PORT=3400 nodemon ./dist/index.js",
         "test": "cross-env jest --watchAll --coverage --runInBand",
+        "test:prod": "react-scripts test --watchAll --collectCoverage --ci --silent --watchAll=false ",
         "prepare": "husky install"
     },
     "author": "Alejandro Montes",
