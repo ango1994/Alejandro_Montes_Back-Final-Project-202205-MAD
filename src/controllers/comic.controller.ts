@@ -49,8 +49,6 @@ export class ComicController {
     ) => {
         const userID = (req as unknown as ExtRequest).tokenPayload.id;
         const findComic = await Comic.findById(req.params.id);
-        console.log(findComic);
-        console.log(req.body.score);
         const error = new Error('Comic or score invalid');
         if (!findComic || Number.isNaN(Number(req.body.score))) {
             error.name = 'UserError';
