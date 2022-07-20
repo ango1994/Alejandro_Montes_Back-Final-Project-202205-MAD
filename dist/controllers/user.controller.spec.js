@@ -117,8 +117,8 @@ describe('Given a instantiated controller Usercontroller', () => {
             expect(next).toBeCalled();
         });
     });
-    describe('When method patchController is called', () => {
-        test.skip('Then an user should be patched', async () => {
+    describe('When method patchController is called with a valid id', () => {
+        test('Then an user should be patched', async () => {
             req = {
                 params: { id: '123456789012345678901234' },
                 tokenPayload: { id: '123456789012345678901234' },
